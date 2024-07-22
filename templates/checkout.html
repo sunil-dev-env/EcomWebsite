@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load custom_filters %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2>Checkout</h2>
+    {% if cart_items %}
+    <form method="post">
+        {% csrf_token %}
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Image</th>
+                    <th>Product</th>
+                    <th>Quantity</th>
+                    <th>Price</th>
+                    <th>Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in cart_items %}
+                <tr>
+                    <td>
+                        <img src="{% if item.product.image %}{{ item.product.image.url }}{% else %}{% static 'img/default_product.jpg' %}{% endif %}" alt="{{ item.product.name }}" class="img-thumbnail" style="width: 100px; height: auto;">
+                    </td>
+                    <td><a href="{% url 'product_detail' item.product.id %}">{{ item.product.name }}</a></td>
+                    <td>{{ item.quantity }}</td>
+                    <td>${{ item.product.price|floatformat:2 }}</td>
+                    <td>${{ item.product.price|multiply:item.quantity }}</td>
+                </tr>
+                {% endfor %}
+                <tr>
+                    <td colspan="4" class="text-right"><strong>Total:</strong></td>
+                    <td><strong>${{ total_cost|floatformat:2 }}</strong></td>
+                </tr>
+            </tbody>
+        </table>
+        
+        <div class="form-group">
+            <label for="shipping_address">Shipping Address</label>
+            <textarea class="form-control" id="shipping_address" name="shipping_address" rows="3" required></textarea>
+        </div>
+        <div class="form-group">
+            <label for="payment_method">Payment Method</label>
+            <select class="form-control" id="payment_method" name="payment_method" required>
+                <option value="cash_on_delivery">Cash on Delivery</option>
+                <option value="card">Credit Card</option>
+            </select>
+        </div>
+        <div id="credit_card_fields" style="display: none;">
+            <div class="form-group">
+                <label for="card_number">Card Number</label>
+                <input type="text" class="form-control" id="card_number" name="card_number">
+            </div>
+            <div class="form-group">
+                <label for="expiry_date">Expiry Date</label>
+                <input type="text" class="form-control" id="expiry_date" name="expiry_date">
+            </div>
+            <div class="form-group">
+                <label for="cvv">CVV</label>
+                <input type="text" class="form-control" id="cvv" name="cvv">
+            </div>
+            <div class="form-group">
+                <label for="card_holder_name">Card Holder Name</label>
+                <input type="text" class="form-control" id="card_holder_name" name="card_holder_name">
+            </div>
+        </div>
+        <button type="submit" class="btn btn-primary">Place Order</button>
+    </form>
+    {% else %}
+    <p>Your cart is empty. Add some items to proceed to checkout.</p>
+    {% endif %}
+</div>
+<br>
+{% endblock %}

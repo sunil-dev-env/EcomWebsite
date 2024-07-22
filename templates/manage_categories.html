@@ -1,0 +1,36 @@
+<!-- templates/manage_categories.html -->
+
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+  <h2>Manage Categories</h2>
+  
+  <!-- Add Category Form -->
+  <form method="POST" action="{% url 'add_category' %}">
+    {% csrf_token %}
+    <div class="mb-3">
+      <label for="categoryName" class="form-label">New Category Name</label>
+      <input type="text" class="form-control" id="categoryName" name="category_name" required>
+    </div>
+    <button type="submit" class="btn btn-primary">Add Category</button>
+  </form>
+  
+  <hr>
+
+  <ul class="list-group">
+    {% for category in categories %}
+    <li class="list-group-item d-flex justify-content-between align-items-center">
+      {{ category.name }}
+      <div>
+        <!-- Delete Form -->
+        <form method="POST" action="{% url 'delete_category' category.id %}" style="display:inline;">
+          {% csrf_token %}
+          <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+        </form>
+      </div>
+    </li>
+    {% endfor %}
+  </ul>
+</div>
+{% endblock %}

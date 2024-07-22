@@ -1,0 +1,45 @@
+<!-- templates/order_detail.html -->
+
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<div class="container mt-5">
+  <h2>Order Details - Order #{{ order.id }}</h2>
+  <div class="card mb-3">
+    <div class="card-body">
+      <h5 class="card-title">Order Summary</h5>
+      <p><strong>Order Date:</strong> {{ order.ordered_date }}</p>
+      <p><strong>Status:</strong> {{ order.get_status_display }}</p>
+      <p><strong>Total Amount:</strong> ${{ order.get_total }}</p>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-body">
+      <h5 class="card-title">Order Items</h5>
+      <ul class="list-group">
+        {% for item in order.order_items.all %}
+          <li class="list-group-item">
+            <div class="row">
+              <div class="col-md-2">
+                <img src="{% if item.product.image %}{{ item.product.image.url }}{% else %}{% static 'img/default_product.jpg' %}{% endif %}" alt="{{ item.product.name }}" class="img-fluid" style="max-width: 150px;">
+              </div>
+              <div class="col-md-10">
+                <strong>Product:</strong> {{ item.product.name }} <br>
+                <strong>Price:</strong> ${{ item.product.price }} <br>
+                <strong>Quantity:</strong> {{ item.quantity }} <br>
+                <strong>Total Price:</strong> ${{ item.get_total_item_price }} <br>
+                <strong>Description:</strong> {{ item.product.description }} <br>
+                <strong>Category:</strong> {{ item.product.category.name }} <br>
+                <strong>Size:</strong> {{ item.product.size }} <br>
+                <strong>Color:</strong> {{ item.product.color }} <br>
+              </div>
+            </div>
+          </li>
+        {% empty %}
+          <li class="list-group-item">No items in this order.</li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+</div>
+{% endblock %}

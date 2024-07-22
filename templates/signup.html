@@ -1,0 +1,56 @@
+<!-- templates/signup.html -->
+
+{% extends 'base.html' %}
+
+{% block content %}
+<body class="signup-page background-style">
+  <div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="border p-4 rounded">
+                <h2 class="text-center mb-4">Sign Up</h2>
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        {{ form.username.errors }}
+                        {{ form.username.label_tag }}
+                        {{ form.username }}
+                    </div>
+                    <div class="form-group">
+                        {{ form.email.errors }}
+                        {{ form.email.label_tag }}
+                        {{ form.email }}
+                    </div>
+                    <div class="form-group">
+                        {{ form.dob.errors }}
+                        {{ form.dob.label_tag }}
+                        {{ form.dob }}
+                    </div>
+                    <div class="form-group">
+                        {{ form.password1.errors }}
+                        {{ form.password1.label_tag }}
+                        {{ form.password1 }}
+                    </div>
+                    <div class="form-group">
+                        {{ form.password2.errors }}
+                        {{ form.password2.label_tag }}
+                        {{ form.password2 }}
+                    </div>
+                    <div class="form-group">
+                        {{ form.contact_number.errors }}
+                        {{ form.contact_number.label_tag }}
+                        {{ form.contact_number }}
+                    </div>
+                    <div class="form-group">
+                        {{ form.address.errors }}
+                        {{ form.address.label_tag }}
+                        {{ form.address }}
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block">Sign Up</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+{% endblock %}

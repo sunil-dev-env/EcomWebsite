@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+  <div class="row">
+    <div class="col-md-6">
+      <img src="{{ product.image.url }}" alt="{{ product.name }}" class="img-fluid rounded shadow-sm">
+    </div>
+    <div class="col-md-6">
+      <h2 class="display-4">{{ product.name }}</h2>
+      <p>{{ product.description }}</p>
+      <p class="text-muted"><strong>Category:</strong> {{ product.category.name }}</p>
+      {% if product.size == "1" %}
+      <p class="text-muted"><strong>Size:</strong>One Size</p>
+      {% else %}
+      <p class="text-muted"><strong>Size:</strong> {{ product.size }}</p>
+      {% endif %}
+      <p class="text-muted"><strong>Colour:</strong> {{ product.color }}</p>
+      <p class="text-success h4"><strong>Price:</strong> ${{ product.price }}</p>
+      
+      {% if user.is_authenticated %}
+      <hr>
+      <h4>Add a Review</h4>
+      <form method="post" class="mb-4">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-primary">Submit Review</button>
+      </form>
+      {% endif %}
+      
+      <hr>
+      <h4>Reviews</h4>
+      {% if reviews %}
+        <div class="card mb-3">
+          <div class="card-body">
+            <ul class="list-unstyled">
+              {% for review in reviews %}
+              <li class="mb-3">
+                <strong>{{ review.user.username }}</strong> - {{ review.created_at|date:"F d, Y" }}<br>
+                <p class="mb-1">{{ review.comment }}</p>
+                <p>Rating: <span class="badge badge-warning">{{ review.rating }}</span></p>
+              </li>
+              {% empty %}
+              <li>No reviews yet.</li>
+              {% endfor %}
+            </ul>
+          </div>
+        </div>
+      {% else %}
+        <p>No reviews yet.</p>
+      {% endif %}
+      
+      {% if user.is_authenticated %}
+        {% if product.id in cart_product_ids %}
+          <a href="{% url 'cart' %}" class="btn btn-secondary btn-lg btn-block">Go to Cart</a>
+        {% else %}
+          <form action="{% url 'add_to_cart' product.id %}" method="post" class="d-inline">
+          {% csrf_token %}
+          <button type="submit" class="btn btn-success btn-lg btn-block">Add to Cart</button>
+          </form>
+        {% endif %}
+      {% endif %}
+    </div>
+  </div>
+</div>
+<br>
+{% endblock %}

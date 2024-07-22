@@ -1,0 +1,13 @@
+
+dj-database-url==2.2.0
+Django==5.0.6
+Flask==3.0.0
+Flask-Login==0.6.3
+Flask-SQLAlchemy==3.1.1
+psycopg2==2.9.9
+psycopg2-binary==2.9.9
+pywhatkit==5.4
+SQLAlchemy==2.0.31
+Werkzeug==3.0.1
+whitenoise==6.7.0
+wikipedia==1.4.0

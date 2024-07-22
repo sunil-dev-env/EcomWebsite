@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+  <h2>Your Order History</h2>
+  {% if orders %}
+    <ul class="list-group">
+      {% for order in orders %}
+        <li class="list-group-item mb-3">
+          <div>
+            <strong>Order Number:</strong> {{ order.id }} <br>
+            <strong>Order Date:</strong> {{ order.ordered_date }} <br>
+            <strong>Status:</strong> {{ order.get_status_display }} <br>
+            <strong>Total Amount:</strong> ${{ order.total_cost|floatformat:2 }}
+          </div>
+          <div>
+            <a href="{% url 'order_detail' order.id %}" class="btn btn-sm btn-primary">View Details</a>
+            {% if order.status in 'ordered,on_the_way' %}
+                        <form action="{% url 'cancel_it' order.id %}" method="post" style="display: inline;">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-sm btn-danger">Cancel Order</button>
+                        </form>
+                    {% endif %}
+                    {% if order.status in 'cancelled,delivered' %}
+                        <form action="{% url 'request_return' order.id %}" method="post" style="display: inline;">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-sm btn-warning">Request Return</button>
+                        </form>
+                    {% endif %}
+          </div>
+        </li>
+      {% empty %}
+        <li class="list-group-item">You have no orders yet.</li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>You have no orders yet.</p>
+  {% endif %}
+</div>
+{% endblock %}

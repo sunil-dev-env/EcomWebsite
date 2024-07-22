@@ -1,0 +1,28 @@
+<!-- templates/manage_users.html -->
+
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+  <h2>Manage Users</h2>
+  <ul class="list-group">
+    {% for user in users %}
+    <li class="list-group-item d-flex justify-content-between align-items-center">
+      {{ user.username }} | Email: {{ user.email }}
+      <div class="btn-group" role="group" aria-label="User actions">
+          {% if not user.is_staff %}
+          <form method="POST" action="{% url 'promote_to_staff' user.id %}" class="d-inline">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-sm btn-info">Make Staff</button>
+          </form>
+          {% endif %}
+          <form method="POST" action="{% url 'delete_user' user.id %}" class="d-inline ml-2">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+          </form>
+      </div>
+    </li>  
+    {% endfor %}
+  </ul>
+</div>
+{% endblock %}

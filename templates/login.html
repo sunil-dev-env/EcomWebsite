@@ -1,0 +1,24 @@
+<!-- templates/login.html -->
+
+{% extends 'base.html' %}
+
+{% block content %}
+<body class="login-page background-style">
+<div class="container mt-5 login-container">
+  <h2>Login</h2>
+  <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div class="form-group">
+      <label for="username">Username</label>
+      <input type="text" class="form-control" id="username" name="username" required>
+    </div>
+    <div class="form-group">
+      <label for="password">Password</label>
+      <input type="password" class="form-control" id="password" name="password" required>
+    </div>
+    <button type="submit" class="btn btn-primary">Login</button>
+  </form>
+  <a href="{% url 'forgot_password' %}" class="btn btn-link">Forgot Password?</a>
+</div>
+</body>
+{% endblock %}
