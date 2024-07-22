@@ -19,7 +19,7 @@ def home(request):
     color = request.GET.get('color', '').lower()
     size = request.GET.get('size', '').upper()
     price = request.GET.get('price','')
-    filters_applied = bool(request.GET)
+    filters_applied = any([category, color, size, price])
 
     if category:
         products = products.filter(category__name=category)
@@ -58,9 +58,8 @@ def signup(request):
     if request.method == 'POST':
         form = SignUpForm(request.POST)
         if form.is_valid():
-            user = form.save()
-            login(request, user)
-            return redirect('home')
+            form.save()
+            return redirect('login')
     else:
         form = SignUpForm()
     return render(request, 'signup.html', {'form': form})
@@ -92,6 +91,7 @@ def forgot_password(request):
     return render(request, 'forgot_password.html')
 
 def user_login(request):
+    error_message = None
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
@@ -101,8 +101,8 @@ def user_login(request):
             login(request, user)
             return redirect('home')
         else:
-            messages.error(request, 'Invalid username or password.')
-    return render(request, 'login.html')
+            error_message = 'Invalid username or password.'
+    return render(request, 'login.html', {'error_message': error_message})
 
 
 def user_logout(request):

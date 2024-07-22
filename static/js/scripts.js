@@ -49,3 +49,4 @@ document.addEventListener("DOMContentLoaded", function() {
   var priceDropdown = document.getElementById('priceDropdown');
   toggleCustomPrice(priceDropdown);
 });
+

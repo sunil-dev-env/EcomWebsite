@@ -2,104 +2,224 @@
 {% load static %}
 
 {% block content %}
+<style>
+  .sidebar {
+    height: 100%;
+    width: 0;
+    position: fixed;
+    z-index: 1;
+    top: 0;
+    left: 0;
+    background-color: #111;
+    overflow-x: hidden;
+    transition: 0.5s;
+    padding-top: 60px;
+  }
 
-<body class="home-page">
-<div class="container mt-4">
-    <form method="get" action="{% url 'home' %}" class="filter-form">
-        <div class="form-row">
-            <div class="form-group col-md-2">
-                <label for="category">Category</label>
-                <select class="form-control" id="category" name="category">
-                    <option value="">All Categories</option>
-                    <option value="male" {% if context.current_category == 'male' %}selected{% endif %}>Mens</option>
-                    <option value="female" {% if context.current_category == 'female' %}selected{% endif %}>Womens</option>
-                </select>
-            </div>
-            <div class="form-group col-md-2">
-                <label for="color">Color</label>
-                <select class="form-control" id="color" name="color">
-                    <option value="">All Colors</option>
-                    <option value="red" {% if context.current_color == 'red' %}selected{% endif %}>Red</option>
-                    <option value="blue" {% if context.current_color == 'blue' %}selected{% endif %}>Blue</option>
-                    <option value="green" {% if context.current_color == 'green' %}selected{% endif %}>Green</option>
-                    <option value="black" {% if context.current_color == 'black' %}selected{% endif %}>Black</option>
-                    <option value="white" {% if context.current_color == 'white' %}selected{% endif %}>White</option>
-                    <option value="yello" {% if context.current_color == 'yellow' %}selected{% endif %}>Yellow</option>
-                </select>
-            </div>
-            <div class="form-group col-md-2">
-                <label for="size">Size</label>
-                <select class="form-control" id="size" name="size">
-                    <option value="">All Sizes</option>
-                    <option value="S" {% if context.current_size == 'S' %}selected{% endif %}>Small</option>
-                    <option value="M" {% if context.current_size == 'M' %}selected{% endif %}>Medium</option>
-                    <option value="L" {% if context.current_size == 'L' %}selected{% endif %}>Large</option>
-                    <option value="1" {% if context.current_size == '1' %}selected{% endif %}>One Size</option>
-                </select>
-            </div>
-            <div class="form-group col-md-3">
-                <label for="price">Price</label>
-                <input list="price-options" class="form-control" id="price" name="price" placeholder="Min-Max" value="{{ context.current_price }}">
-                <datalist id="price-options">
-                    <option value="0-50">$0 - $50</option>
-                    <option value="50-100">$50 - $100</option>
-                    <option value="100-200">$100 - $200</option>
-                    <option value="200-500">$200 - $500</option>
-                </datalist>
-            </div>                    
-            <div class="form-group form-button col-md-3">
-                <div class="form-group col-md-12 text-left">
-                    <button type="submit" class="btn btn-primary">Filter</button>
-                    <a href="{% url 'home' %}" class="btn btn-secondary ml-2">Clear Filters</a>
-                </div>
-            </div>
-        </div>
-    </form>
-</div>
+  .sidebar a {
+    padding: 8px 8px 8px 32px;
+    text-decoration: none;
+    font-size: 25px;
+    color: #818181;
+    display: block;
+    transition: 0.3s;
+  }
 
+  .sidebar a:hover {
+    color: #f1f1f1;
+  }
 
+  .sidebar .closebtn {
+    position: absolute;
+    top: 0;
+    right: 25px;
+    font-size: 36px;
+    margin-left: 50px;
+  }
 
-<div class="container mt-4">
-    <div class="row">
-        {% for product in products %}
-        <div class="col-md-4 mb-4">
-            <div class="card product-card">
-                <img src="{% if product.image %}{{ product.image.url }}{% else %}{% static 'img/default.jpg' %}{% endif %}" class="card-img-top product-image" alt="{{ product.name }}">
-                <div class="card-body">
-                    <div class="product-header">
-                        <h5 class="card-title">{{ product.name }}</h5>
-                    </div>
-                    <div class="product-details">
-                    {% if product.size == "1" %}
-                        <p class="text-muted"><strong>Size:</strong> One Size</p>
-                    {% else %}
-                        <p class="text-muted"><strong>Size:</strong> {{ product.size }}</p>
-                    {% endif %}
-                    <p class="card-text">Color: {{ product.color }}</p>
-                    <p class="card-text">Price: ${{ product.price }}</p>
-                    </div>
-                    <div class="product-actions">
-                    <a href="{% url 'product_detail' product.id %}" class="btn btn-primary mr-2">View Details</a>
-                    {% if user.is_authenticated %}
-                        {% if product.id in cart_product_ids %}
-                            <a href="{% url 'cart' %}" class="btn btn-secondary">Go to Cart</a>
-                        {% else %}
-                        <form action="{% url 'add_to_cart' product.id %}" method="post" class="d-inline">
-                            {% csrf_token %}
-                            <button type="submit" class="btn btn-success">Add to Cart</button>
-                        </form>
-                        {% endif %}
-                    {% endif %}
-                </div>
-                </div>
-            </div>
-        </div>
-        {% empty %}
-        <div class="col">
-            <p>No products available.</p>
-        </div>
-        {% endfor %}
+  .openbtn {
+    font-size: 20px;
+    cursor: pointer;
+    background-color: #111;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+  }
+
+  #main {
+    transition: margin-left .5s;
+    padding: 16px;
+  }
+  
+  .btn {
+    display: inline-block;
+    font-size: 16px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    text-align: center;
+    vertical-align: middle; /* Aligns button vertically if needed */
+}
+
+.btn-primary {
+    background-color: blue;
+    color: white;
+}
+.btn-secondary {
+    background-color: black;
+}
+.btn-secondary:hover {
+    background-color: darked;
+}
+</style>
+
+<div id="filterSidebar" class="sidebar">
+  <a href="javascript:void(0)" class="closebtn" onclick="toggleNav()">&#9776;</a>
+  <form method="get" action="{% url 'home' %}" class="filter-form">
+    <div class="form-row">
+      <div class="form-group col-md-12">
+        <label for="category">Category</label>
+        <select class="form-control" id="category" name="category">
+          <option value="">All Categories</option>
+          <option value="male" {% if context.current_category == 'male' %}selected{% endif %}>Men</option>
+          <option value="female" {% if context.current_category == 'female' %}selected{% endif %}>Women</option>
+        </select>
+      </div>
+      <div class="form-group col-md-12">
+        <label for="color">Color</label>
+        <select class="form-control" id="color" name="color">
+            <option value="">All Colors</option>
+            <option value="red" {% if context.current_color == 'red' %}selected{% endif %}>Red</option>
+            <option value="blue" {% if context.current_color == 'blue' %}selected{% endif %}>Blue</option>
+            <option value="green" {% if context.current_color == 'green' %}selected{% endif %}>Green</option>
+            <option value="black" {% if context.current_color == 'black' %}selected{% endif %}>Black</option>
+            <option value="white" {% if context.current_color == 'white' %}selected{% endif %}>White</option>
+            <option value="yellow" {% if context.current_color == 'yellow' %}selected{% endif %}>Yellow</option>
+            <option value="brown" {% if context.current_color == 'brown' %}selected{% endif %}>Brown</option>
+            <option value="pink" {% if context.current_color == 'pink' %}selected{% endif %}>Pink</option>
+            <option value="purple" {% if context.current_color == 'purple' %}selected{% endif %}>Purple</option>
+            <option value="gray" {% if context.current_color == 'gray' %}selected{% endif %}>Gray</option>
+            <option value="orange" {% if context.current_color == 'orange' %}selected{% endif %}>Orange</option>
+            <option value="silver" {% if context.current_color == 'silver' %}selected{% endif %}>Silver</option>
+            <option value="indigo" {% if context.current_color == 'indigo' %}selected{% endif %}>Indigo</option>
+            <option value="magenta" {% if context.current_color == 'magenta' %}selected{% endif %}>Magenta</option>
+            <option value="navy_blue" {% if context.current_color == 'navy_blue' %}selected{% endif %}>Navy Blue</option>
+            <option value="cyan" {% if context.current_color == 'cyan' %}selected{% endif %}>Cyan</option>
+
+        </select>
+      </div>
+      <div class="form-group col-md-12">
+        <label for="size">Size</label>
+        <select class="form-control" id="size" name="size">
+            <option value="">All Sizes</option>
+            <option value="S" {% if context.current_size == 'S' %}selected{% endif %}>Small</option>
+            <option value="M" {% if context.current_size == 'M' %}selected{% endif %}>Medium</option>
+            <option value="L" {% if context.current_size == 'L' %}selected{% endif %}>Large</option>
+            <option value="1" {% if context.current_size == '1' %}selected{% endif %}>One Size</option>
+        </select>
+      </div>
+      <div class="form-group col-md-12">
+        <label for="price">Price</label>
+        <input list="price-options" class="form-control" id="price" name="price" placeholder="Min-Max" value="{{ context.current_price }}">
+        <datalist id="price-options">
+            <option value="0-50">$0 - $50</option>
+            <option value="50-100">$50 - $100</option>
+            <option value="100-200">$100 - $200</option>
+            <option value="200-500">$200 - $500</option>
+        </datalist>
+      </div>
+      <div class="form-group col-md-12 text-left">
+        <button type="submit" class="btn btn-primary">Filter</button>
+        <a href="{% url 'home' %}" class="btn btn-secondary ml-1" onclick="clearFilters()">Clear Filters</a>
+      </div>
     </div>
+  </form>
 </div>
-</body>
+
+<div id="main">
+  <button id="filterToggleBtn" class="openbtn" onclick="toggleNav()">&#9776; Open Filters</button>
+  <div class="container mt-4">
+    <div class="row">
+      {% for product in products %}
+      <div class="col-md-4 mb-4">
+        <div class="card product-card">
+          <img src="{% if product.image %}{{ product.image.url }}{% else %}{% static 'img/default.jpg' %}{% endif %}" class="card-img-top product-image" alt="{{ product.name }}">
+          <div class="card-body">
+            <div class="product-header">
+              <h5 class="card-title">{{ product.name }}</h5>
+            </div>
+            <div class="product-details">
+              {% if product.size == "1" %}
+              <p class="text-muted"><strong>Size:</strong> One Size</p>
+              {% else %}
+              <p class="text-muted"><strong>Size:</strong> {{ product.size }}</p>
+              {% endif %}
+              <p class="card-text">Color: {{ product.color }}</p>
+              <p class="card-text">Price: ${{ product.price }}</p>
+            </div>
+            <div class="product-actions">
+              <a href="{% url 'product_detail' product.id %}" class="btn btn-primary mr-2">View Details</a>
+              {% if user.is_authenticated %}
+              {% if product.id in cart_product_ids %}
+              <a href="{% url 'cart' %}" class="btn btn-secondary">Go to Cart</a>
+              {% else %}
+              <form action="{% url 'add_to_cart' product.id %}" method="post" class="d-inline">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-success">Add to Cart</button>
+              </form>
+              {% endif %}
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
+      {% empty %}
+      <div class="col">
+        <p>No products available.</p>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+<script>
+  let sidebarOpen = false;
+
+  function toggleNav() {
+    const sidebar = document.getElementById("filterSidebar");
+    const main = document.getElementById("main");
+    const toggleBtn = document.getElementById("filterToggleBtn");
+
+    if (sidebarOpen) {
+      sidebar.style.width = "0";
+      main.style.marginLeft = "0";
+      toggleBtn.innerHTML = "&#9776; Open Filters";
+    } else {
+      sidebar.style.width = "250px";
+      main.style.marginLeft = "250px";
+      toggleBtn.innerHTML = "&#9776; Close Filters";
+    }
+
+    sidebarOpen = !sidebarOpen;
+  }
+
+  function clearFilters() {
+    sessionStorage.setItem('clearFiltersOnLoad', 'true');
+  }
+
+  window.addEventListener('load', () => {
+    const shouldClear = sessionStorage.getItem('clearFiltersOnLoad') === 'true';
+    if (shouldClear) {
+      sessionStorage.removeItem('clearFiltersOnLoad');
+      const url = new URL(window.location.href);
+      url.searchParams.delete('category');
+      url.searchParams.delete('color');
+      url.searchParams.delete('size');
+      url.searchParams.delete('price');
+      window.location.href = url.toString();
+    }
+  });
+</script>
+
 {% endblock %}

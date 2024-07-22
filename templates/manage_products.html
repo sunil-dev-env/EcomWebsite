@@ -1,12 +1,8 @@
-<!-- templates/manage_products.html -->
-
 {% extends 'base.html' %}
 
 {% block content %}
 <div class="container mt-5">
   <h2>Manage Products</h2>
-  
-  <!-- Add Product Form -->
   <form method="POST" action="{% url 'add_product' %}" enctype="multipart/form-data">
     {% csrf_token %}
     <div class="mb-3">
@@ -50,6 +46,16 @@
           <option value="black">Black</option>
           <option value="white">White</option>
           <option value="yellow">Yellow</option>
+          <option value="brown">Brown</option>
+          <option value="purple">Purple</option>
+          <option value="gray">Gray</option>
+          <option value="orange">Orange</option>
+          <option value="pink">Pink</option>
+          <option value="silver">Silver</option>
+          <option value="indigo">Indigo</option>
+          <option value="magenta">Magenta</option>
+          <option value="navy_blue">Navy Blue</option>
+          <option value="cyan">Cyan</option>
       </select>
     </div>
 
