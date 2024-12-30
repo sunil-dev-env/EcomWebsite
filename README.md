@@ -1,5 +1,5 @@
 ## 1. Clone the Repository
-git clone https://github.com/revunuru/EcomWebsite.git
+git clone https://github.com/sunil-dev-env/EcomWebsite.git
 
 cd EcomWebsite
 
